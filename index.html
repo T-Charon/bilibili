@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bilibili</title>
+</head>
+<link rel="stylesheet" href="./css/1.css">
+
+<body>
+  <div class="box">
+    <div class="first_line">
+      <div class="first_line_logo"><img src="./img/logo-bilibili-pink.png@132w_60h.png" alt=""></div>
+      <div class="first_line_search"><img src="./img/搜索.png" alt=""></div>
+      <div class="first_line_login">登录</div>
+      <div class="first_line_upload">下载App</div>
+    </div>
+    <div style="display: flex; position: relative;" class="container">
+      <div class="a">
+        <div class="nav_list"></div>
+        <div class="navbar_show">∨</div>
+        <div class="line"></div>
+      </div>
+
+      <div class="b">
+        <div class="navbar_all_list"></div>
+        <div class="navbar_hidden">∧</div>
+      </div>
+    </div>
+    <hr>
+    <div class="vedio"></div>
+    <div class="bottom-banner">
+      <img src="./img/logo-bilibili-pink.png@132w_60h.png" alt="App Icon" class="banner-icon">
+      <span class="banner-text">打开App，看你感兴趣的视频</span>
+    </div>
+  </div>
+</body>
+
+<script src="./js/index.js"></script>
+<script>
+  (function () {
+    var container = document.querySelector('.container');
+    var navList = document.querySelector('.nav_list');
+    var menuList = document.querySelector('.navbar_all_list');
+    var a = document.querySelector('.a');
+    var b = document.querySelector('.b');
+    var line = document.querySelector('.line');
+    var video = document.querySelector('.vedio');
+    var flag = true;
+
+    // 转换点赞数据
+    function formatToTenThousand(num) {
+      if (num >= 10000) {
+        // 将数字转换为“万”单位
+        let numInTenThousand = num / 10000;
+        // 使用 toFixed() 方法保留小数点后一位，并返回带有“万”字的字符串
+        return `${numInTenThousand.toFixed(1)}万`;
+
+      } else {
+        return num;
+      }
+    }
+
+    // 类型转换
+    function typeOf(data) {
+      return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
+    }
+
+    // 创建元素
+    function creatElement(tag, attrs, children) {
+      if (typeof tag != "string") throw new Error("tag参数类型必须是字符串");
+      var ele = document.createElement(tag);
+      if (ele instanceof HTMLUnknownElement) throw new Error("tag标签名不合法");
+      attrs = typeOf(attrs) === 'object' ? attrs : {};
+      Object.entries(attrs).forEach(function (attr) {
+        var attrName = attr[0];
+        var attrValue = attr[1];
+        ele[attrName] = attrValue;
+      })
+      if (typeOf(children) === 'string') ele.innerHTML = children;
+      return ele;
+    }
+
+    // 设置导航栏底部横线位置
+    function setLinePosition(element) {
+      var scrollOffset = a.scrollLeft; // 获取导航栏的滚动偏移量
+      line.style.width = `${element.offsetWidth}px`; // 设置横线宽度
+      line.style.left = `${element.offsetLeft - scrollOffset}px`; // 动态调整横线位置
+    };
+
+    // 滚动使导航栏元素居中
+    function scrollToCenter(element) {
+      var wrapperWidth = a.offsetWidth; // 容器宽度
+      var itemOffset = element.offsetLeft; // 当前项的左偏移
+      var itemWidth = element.offsetWidth; // 当前项的宽度
+      var scrollPosition = itemOffset - wrapperWidth / 2 + itemWidth / 2; // 滚动位置公式
+      a.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth', // 平滑滚动
+      });
+    }
+
+    // 切换导航栏卡片样式
+    function changeMenu() {
+      if (flag) {
+        a.style.display = 'none';
+        b.style.transform = 'translate3d(0,0,0)';
+        video.style.opacity = '0.3';
+      } else {
+        a.style.display = 'block';
+        b.style.transform = 'translate3d(0,-100%,0)';
+        video.style.opacity = '1';
+      }
+      flag = !flag;
+    }
+
+    // 导航栏添加绑定点击事件
+    function bindEvent(el) {
+      el.addEventListener('click', function (e) {
+        if (e.target.className === 'navbar_show' || e.target.className === 'navbar_hidden') {
+          changeMenu();
+          return;
+        }
+        console.log(e.target.innerText);
+        if (e.target.parentNode.className === 'navbar_all_list') {
+          changeMenu();
+          // 查找 nav_list 中匹配的项并高亮
+          document.querySelectorAll('.nav_list .nav-item').forEach(function (item) {
+            item.classList.remove('active');
+            if (item.innerText === e.target.innerText) {
+              item.classList.add('active');
+              setScrollLine(false, item)
+            }
+          });
+        }
+        if (e.target.parentNode.className === 'nav_list') {
+          setScrollLine(false, e.target);
+        }
+      })
+    }
+
+    // 初始化导航栏
+    function initTab(config) {
+      var fragment = document.createDocumentFragment();
+      config.data.forEach(function (value) {
+        var item = creatElement('div', { className: 'nav-item' }, value);
+        fragment.appendChild(item);
+      });
+      var cloneFragment = fragment.cloneNode(true);
+      navList.appendChild(fragment);
+      menuList.appendChild(cloneFragment);
+      bindEvent(container);
+      setScrollLine(true);
+    };
+    initTab({
+      data: res.nav,
+      callback: function () { }
+    })
+
+    // 导航栏底部横线动画
+    function setScrollLine(isInitialization, ele) {
+      var navItems = document.querySelectorAll('.nav-item');
+
+      // 是否初始化
+      if (isInitialization) {
+        // 默认激活第一个导航项
+        setLinePosition(navItems[0]);
+        scrollToCenter(navItems[0]);
+        navItems[0].classList.add('active');
+        return;
+      }
+
+      // 移动横线
+      setLinePosition(ele);
+      // 滚动使其居中
+      scrollToCenter(ele);
+      // 更新激活状态
+      navItems.forEach(function (nav) {
+        nav.classList.remove('active')
+      });
+      ele.classList.add('active');
+
+      // 滚动事件：实时更新横线位置
+      a.addEventListener('scroll', function () {
+        const activeItem = document.querySelector('.nav-item.active');
+        setLinePosition(activeItem);
+      });
+    }
+
+    // 初始化卡片
+    function initVedio(data) {
+      var fragment = document.createDocumentFragment();
+      data.forEach(function (value) {
+        var view = formatToTenThousand(value.stat.view);
+        var danmaku = formatToTenThousand(value.stat.danmaku);
+        var vedio_img = creatElement('div', { className: 'vedio_img' }, ` <div class='pic_box'> 
+                        <img class='pic' src='${value.pic}'>
+                        <div class="pinglun">
+                          <div class='inner'> <img class='icon' src='./img/播放.png'>${view} </div>
+                          <div class='inner'> <img class='icon1' src='./img/弹幕图标.png'>${danmaku} </div>
+                        </div>
+                        <div class="pinglun_hidden"></div>
+                      </div>
+                      <span>${value.title}</span>`);
+        fragment.appendChild(vedio_img);
+      });
+      document.querySelector('.vedio').appendChild(fragment);
+    }
+    initVedio(res.data);
+
+    // 底部动画
+    window.addEventListener('load', function () {
+      var banner = document.querySelector('.bottom-banner');
+      banner.style.animation = 'slide-up 0.5s ease-in-out forwards';
+    });
+  })()
+
+
+</script>
+
+</html>

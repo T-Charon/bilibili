@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<script src="./js/index.js"></script>
+
+<body>
+  <div>我是头部</div>
+  <div class="tabs"></div>
+  <div>内容区域</div>
+  <div class=""></div>
+</body>
+
+<script>
+  function initDrawer(parent, data) {
+    var drawer = creatElement('div', {className:'drawer'});
+    var content = creatElement('div', {className:'drawer-content'});
+    data.forEach(function (item) {
+      var item = document.creatElement('div',{className:'item'});
+      content.appendChild(item);
+    })
+    drawer.appendChild(content);
+    parent.style.position = 'relative'
+    parent.appendChild(drawer);
+    
+  }
+  function typeOf(data) {
+    return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
+  }
+  // 定义按照要求创建节点的函数creatElement
+  function creatElement(tag, attrs, children) {
+    if (typeof tag != "string") throw new Error("tag参数类型必须是字符串");
+    var ele = document.createElement(tag);
+    if (ele instanceof HTMLUnknownElement) throw new Error("tag标签名不合法");
+    attrs = typeOf(attrs) === 'object' ? attrs : {};
+    Object.entries(attrs).forEach(function (attr) {
+      var attrName = attr[0];
+      var attrValue = attr[1];
+      ele[attrName] = attrValue;
+    })
+    if (typeOf(children) === 'string') ele.innerHTML = children;
+    return ele;
+  }
+  // 
+  var preDistans = 0;
+  function bindEvent(ele, callback) {
+    var parentRectInfo = ele.parentElement.getBoundingClientRect();
+    var centerX = parentRectInfo.width / 2;
+    var parentLeft = parentRectInfo.left;
+    var translateX = 0;
+    ele.addEventListener('click', function (e) {
+      if (e.target.classList.contains('tabs-item')) {
+        var itemRectInfo = e.target.getBoundingClientRect();
+        var itemLeft = itemRectInfo.left;
+        translateX = centerX - (itemLeft - parentLeft) - itemRectInfo.width / 2;
+        pervTranslateX += translateX;
+        ele.style.cssText = `transform : translate3d(${pervTranslateX}px,0,0);transition: all ease-in 200ms`;
+        typeof callback === 'function' && callback(e.target._customData)
+      }
+    })
+  }
+  // 滑动样式
+  function initScroll(ele) {
+    var scrollDistance = 0;
+    var distanceX = 0;
+    ele.addEventListener('touchstart', function (event) {
+      function moveCallBack(e) {
+        distanceX = e.touches[0].clientX - event.touches[0].clientX;
+        ele.style.transform = `translate3d(${scrollDistance + distanceX}px,0,0)`
+      }
+      document.addEventListener('touchmove', moveCallBack);
+      document.addEventListener('touchend', function (e) {
+        scrollDistance += distanceX;
+        distanceX = 0;
+        this.removeEventListener('touchmove', moveCallBack);
+      })
+    })
+  }
+  // 定义一个函数initTabs 渲染Tab栏 指定一个挂载点
+  function initTabs(el, config) {
+    var root = null;
+    if (el instanceof HTMLElement) root = el;
+    if (typeof el === 'string') root = document.querySelector(el);
+    if (!root) throw new Error("el选项是必传项");
+    if (!config || typeOf(config.dataSource) != 'array') throw new Error("config.dataSource必须是数组");
+
+    var container = creatElement('div', { className: 'tabs-container' });
+    var content = creatElement('div', { className: 'tabs-content' });
+
+    initScroll(content);
+    config.dataSource.forEach(function (data) {
+      var tabsItem = creatElement('div', { className: 'tabs-items' }, data);
+      content.appendChild(tabsItem);
+    })
+    container.appendChild(content);
+    root.parentElement.replaceChild(container, root);
+    bindEvent(content, config.callback);
+  }
+
+  initTabs('.tabs', {
+    dataSource: res.nav,
+    callback: function (e) {
+      console.log(e);
+    }
+  })
+</script>
+
+</html>

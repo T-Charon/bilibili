@@ -1,0 +1,276 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.box {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ======首行======= */
+.first_line {
+  display: flex;
+  align-items: center;
+  position: relative;
+  left: 2%;
+  height: 10%;
+  background-color: white;
+  z-index: 999;
+}
+
+.first_line_logo {
+  height: 80%;
+  width: 20%;
+  top: 20%;
+  position: absolute;
+}
+
+.first_line_logo > img {
+  max-width: 100%;
+  height: auto;
+}
+
+.first_line_search {
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  right: 45%;
+}
+
+.first_line_search > img {
+  max-width: 100%;
+  height: auto;
+  opacity: 0.5;
+}
+
+.first_line_login {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+  opacity: 0.8;
+  background-color: #e7e7e7;
+  font-size: small;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 30%;
+  color: #ff679a;
+}
+
+.first_line_upload {
+  height: 50%;
+  width: 25%;
+  position: absolute;
+  right: 3%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ff679a;
+  color: white;
+  border-radius: 0.2667rem;
+}
+
+/* ======导航栏======= */
+.a {
+  width: 100%;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.nav_list {
+  display: inline-flex;
+}
+
+.nav-item {
+  font-weight: 300;
+  flex: none;
+  width: 16vw;
+  font-size: 16px;
+  text-align: center;
+  line-height: 5vh;
+  cursor: pointer;
+  color: #333;
+}
+
+.navbar_show {
+  position: absolute;
+  right: 0;
+  height: 99%;
+  width: 8%;
+  background-color: #ffffff;
+  text-align: center;
+  color: grey;
+  font-size: 22px;
+  top: 4%;
+}
+
+.b {
+  background-color: #ffffff;
+  position: absolute;
+  /* display: none; */
+  z-index: 10;
+  transform: translate3d(0, -100%, 0);
+  transition: all ease 300ms;
+}
+
+.navbar_all_list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  color: #333;
+}
+
+.navbar_hidden {
+  text-align: center;
+  color: grey;
+  border-left: solid 0.0267rem wheat;
+  font-size: 22px;
+  position: relative;
+  top: -10px;
+}
+
+/* ======卡片======= */
+.vedio {
+  margin: 2%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  z-index: -1;
+}
+
+.vedio_img {
+  font-size: 10px;
+  width: 46vw;
+  height: 22vh;
+}
+
+.pic {
+  height: 15vh;
+  width: 46vw;
+}
+
+.pinglun {
+  height: 3.5vh;
+  width: 43vw;
+  display: flex;
+  position: absolute;
+  bottom: 0.1067rem;
+  justify-content: space-between;
+  line-height: 3vh;
+  margin-left: 0.2667rem;
+  margin-right: 0.2667rem;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.pinglun_hidden {
+  height: 3.4vh;
+  width: 46vw;
+  position: absolute;
+  bottom: 0;
+  opacity: 0.3;
+  background-color: black;
+}
+
+.icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.icon1 {
+  width: 1.2rem;
+  height: 0.88rem;
+  margin-top: 0.25rem;
+}
+
+.vedio_img > span {
+  position: relative;
+  top: 0.4rem;
+}
+
+hr {
+  top: 3px;
+  position: relative;
+  color: gray;
+  opacity: 0.3;
+}
+
+.inner {
+  display: flex;
+  gap: 0.1333rem;
+  text-align: center;
+}
+
+.pic_box {
+  position: relative;
+}
+
+/* 底部滑动线 */
+.line {
+  position: absolute;
+  bottom: -3px;
+  height: 2px;
+  width: 0;
+  background-color: #ec89a8;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.nav-item.active {
+  color: #ec89a8;
+  font-weight: bold;
+}
+
+.bottom-banner {
+  height: 5vh;
+  width: 94vw;
+  position: fixed;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background-color: #ed709a;
+  color: white;
+  border-radius: 35px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: slide-up 1s ease-out forwards;
+  justify-content: center;
+}
+
+@keyframes slide-up {
+  from {
+    bottom: -100px;
+  }
+  to {
+    bottom: 100px;
+  }
+}
+
+.banner-icon {
+  height: 3vh;
+  object-fit: cover;
+  margin-right: 10px;
+  filter: brightness(0) invert(1);
+}
+
+.banner-text {
+  line-height: 4vh;
+  font-size: 15px;
+  white-space: nowrap;
+}
