@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -67,20 +68,34 @@
     }
 
     // 创建元素
-    function creatElement(tag, attrs, children) {
-      if (typeof tag != "string") throw new Error("tag参数类型必须是字符串");
-      var ele = document.createElement(tag);
-      if (ele instanceof HTMLUnknownElement) throw new Error("tag标签名不合法");
-      attrs = typeOf(attrs) === 'object' ? attrs : {};
-      Object.entries(attrs).forEach(function (attr) {
-        var attrName = attr[0];
-        var attrValue = attr[1];
-        ele[attrName] = attrValue;
+    function createElement(tag, attrs, children) {
+      // 检测tag是否合法
+      if (typeOf(tag) !== 'string') throw new Error('标签名不合法');
+      if (tag instanceof HTMLUnknownElement) throw new Error('标签名不合法');
+      // 创建节点
+      let element = document.createElement(tag)
+      // 检测attr是否是对象(非必选项)
+      attrs = typeOf(attrs) === 'object' ? attrs : {}
+      // 给节点添加属性值
+      Object.entries(attrs).forEach(function (item) {
+        let attrName = item[0]
+        let attrValue = item[1]
+        // 判断 属性值为对象的情况
+        if (typeOf(attrValue) === 'object') {
+          let attrValueStr = ''
+          Object.entries(attrValue).forEach(function (ele) {
+            attrValueStr += ele.join(':') + ';'
+          })
+          attrValue = attrValueStr
+        }
+        element[attrName] = attrValue
       })
-      if (typeOf(children) === 'string') ele.innerHTML = children;
-      return ele;
+      // 子节点
+      if (typeOf(children) === 'string') {
+        element.innerText = children
+      }
+      return element
     }
-
     // 设置导航栏底部横线位置
     function setLinePosition(element) {
       var scrollOffset = a.scrollLeft; // 获取导航栏的滚动偏移量
